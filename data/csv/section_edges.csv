@@ -1,0 +1,6 @@
+from_station,to_station,distance_km,min_run_time_min,block_count
+HWH,BLY,8,10.7,4
+BLY,SRP,5,4.4,2
+SRP,CGR,7,6.2,4
+CGR,CNS,8,7.1,4
+CNS,BDC,11,11.0,6

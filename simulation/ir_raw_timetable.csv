@@ -1,0 +1,9 @@
+train_no,train_name,station,arrival,departure
+37215,Howrah-Bandel Local,HOWRAH,00:00,00:05
+37215,Howrah-Bandel Local,BALLY,00:15,00:16
+37215,Howrah-Bandel Local,SHRIRAMPUR,00:30,00:31
+37215,Howrah-Bandel Local,BANDEL,00:55,01:00
+
+12345,Express Example,HOWRAH,00:10,00:15
+12345,Express Example,CHANDANNAGAR,00:35,00:37
+12345,Express Example,BANDEL,01:05,01:10

@@ -1,0 +1,7 @@
+station_code,order,km_from_hwh,station_type,num_tracks,max_speed_kmph,has_overtake_loop,has_yard,peak_capacity_trains_per_hr,offpeak_capacity_trains_per_hr
+HWH,1,0,MAJOR,6,60,TRUE,TRUE,30,20
+BLY,2,8,JUNCTION,4,90,TRUE,FALSE,24,18
+SRP,3,13,MAJOR,4,90,TRUE,TRUE,24,18
+CGR,4,20,MAJOR,4,90,TRUE,FALSE,24,18
+CNS,5,28,MAJOR,4,90,TRUE,FALSE,24,18
+BDC,6,39,JUNCTION,6,80,TRUE,TRUE,28,22

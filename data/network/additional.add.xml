@@ -1,0 +1,137 @@
+<additional>
+
+    <!-- ================= STATIONS ================= -->
+
+    <!--<busStop id="HOWRAH"
+         lane="372172712_0"
+         startPos="100"
+         endPos="400"
+         name="HOWRAH"/>
+
+    <busStop id="BALLY"
+         lane="367611314_0"
+         startPos="100"
+         endPos="300"
+         name="BALLY"/>
+
+    <busStop id="SHRIRAMPUR"
+         lane="367611312_0"
+         startPos="200"
+         endPos="500"
+         name="SHRIRAMPUR"/>
+
+    <busStop id="CHANDANNAGAR"
+             lane="382670061_0"
+             startPos="1900"
+             endPos="2300"
+             name="CHANDANNAGAR"/>
+
+    <busStop id="CHUCHURA"
+             lane="372164004#0_0"
+             startPos="1300"
+             endPos="1700"
+             name="CHUCHURA"/>
+
+    <busStop id="BANDEL"
+         lane="521495092#7_0"
+         startPos="200"
+         endPos="500"
+         name="BANDEL"/>-->
+
+
+
+    <!-- ================= HOWRAH ================= -->
+
+    <busStop id="HOWRAH_UP_SLOW"
+             lane="372172712_0"
+             startPos="100"
+             endPos="400"
+             lines="SLOW"/>
+
+    <busStop id="HOWRAH_UP_FAST"
+             lane="372172712_0"
+             startPos="450"
+             endPos="700"
+             lines="FAST"/>
+
+    <busStop id="HOWRAH_DOWN_SLOW"
+             lane="810347770_0"
+             startPos="100"
+             endPos="400"
+             lines="SLOW"/>
+
+    <busStop id="HOWRAH_DOWN_FAST"
+             lane="810347770_0"
+             startPos="450"
+             endPos="700"
+             lines="FAST"/>
+
+    <!-- ================= BANDel ================= -->
+
+    <busStop id="BANDEL_UP_SLOW"
+             lane="521495092#7_0"
+             startPos="100"
+             endPos="400"
+             lines="SLOW"/>
+
+    <busStop id="BANDEL_UP_FAST"
+             lane="521495092#7_0"
+             startPos="450"
+             endPos="700"
+             lines="FAST"/>
+
+    <busStop id="BANDEL_DOWN_SLOW"
+             lane="789062200_0"
+             startPos="100"
+             endPos="400"
+             lines="SLOW"/>
+
+    <busStop id="BANDEL_DOWN_FAST"
+             lane="789062200_0"
+             startPos="450"
+             endPos="700"
+             lines="FAST"/>
+
+
+    <!-- ================= BLOCK SIGNALS ================= -->
+    <!-- DOWN start -->
+<railSignal id="sig_down_start" lane="372172712_0" pos="100"/>
+
+<!-- UP start -->
+<railSignal id="sig_up_start" lane="810347770_0" pos="100"/>
+
+<!-- r_3 insertion start -->
+<railSignal id="sig_r3_start" lane="1311347647#0_0" pos="100"/>
+<!-- FORCE SHORT FIRST BLOCK ON DOWN SIDE -->
+<railSignal id="sig_start_down_1" lane="372172712_0" pos="200"/>
+
+<!-- FORCE SHORT FIRST BLOCK ON UP SIDE -->
+<railSignal id="sig_start_up_1" lane="810347770_0" pos="200"/>
+    <!-- Edge 92642062 (3012m) -->
+    <railSignal id="sig_92642062_1" lane="92642062_0" pos="900"/>
+    <railSignal id="sig_92642062_2" lane="92642062_0" pos="1900"/>
+    <railSignal id="sig_92642062_3" lane="92642062_0" pos="2900"/>
+
+    <!-- Edge 92642074#1 (2269m) -->
+    <railSignal id="sig_92642074_1" lane="92642074#1_0" pos="900"/>
+    <railSignal id="sig_92642074_2" lane="92642074#1_0" pos="1800"/>
+
+    <!-- Edge 92642048 (1185m) -->
+    <railSignal id="sig_92642048_1" lane="92642048_0" pos="900"/>
+
+    <!-- Edge 915848197 (1413m) -->
+    <railSignal id="sig_915848197_1" lane="915848197_0" pos="900"/>
+    
+
+    <!-- Split 372172712 (4939m) -->
+    <railSignal id="sig_372172712_1" lane="372172712_0" pos="1000"/>
+    <railSignal id="sig_372172712_2" lane="372172712_0" pos="2000"/>
+    <railSignal id="sig_372172712_3" lane="372172712_0" pos="3000"/>
+    <railSignal id="sig_372172712_4" lane="372172712_0" pos="4000"/>
+    <!-- SPLIT LONG EDGE 521495092#7 -->
+<railSignal id="sig_521495092_1" lane="521495092#7_0" pos="1000"/>
+<railSignal id="sig_521495092_2" lane="521495092#7_0" pos="2000"/>
+<railSignal id="sig_521495092_3" lane="521495092#7_0" pos="3000"/>
+
+
+</additional>

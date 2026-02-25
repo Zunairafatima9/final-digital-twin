@@ -1,0 +1,22 @@
+<configuration>
+
+    <input>
+        <net-file value="../data/network/network.net.xml"/>
+        <route-files value="../data/network/routes.rou.xml"/>
+        <additional-files value="../data/network/additional.add.xml"/>
+    </input>
+
+    <time>
+        <begin value="0"/>
+        <end value="3600"/>
+    </time>
+
+    <processing>
+        <time-to-teleport value="-1"/>
+    </processing>
+
+    <report>
+        <verbose value="true"/>
+    </report>
+
+</configuration>

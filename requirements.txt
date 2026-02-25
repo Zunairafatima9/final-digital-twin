@@ -1,0 +1,8 @@
+pandas
+numpy
+osmnx
+networkx
+shapely
+streamlit
+sumolib
+traci
