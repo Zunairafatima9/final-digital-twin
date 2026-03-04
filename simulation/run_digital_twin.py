@@ -213,42 +213,7 @@ def dynamic_line_switch(congestion):
             continue
 
     return switches
-# =====================================================
-# EXPORT NETWORK EDGES FOR FRONTEND (ROBUST VERSION)
-# =====================================================
 
-import json
-import sumolib
-
-def export_network_edges():
-
-    print("📡 Exporting network from .net.xml...")
-
-    net = sumolib.net.readNet("../data/network/network.net.xml")
-
-    network_data = []
-
-    for edge in net.getEdges():
-
-        shape = edge.getShape()
-
-        if shape and len(shape) > 1:
-
-            latlon_coords = []
-
-            for x, y in shape:
-                lon, lat = net.convertXY2LonLat(x, y)
-                latlon_coords.append([lat, lon])
-
-            network_data.append({
-                "edge_id": edge.getID(),
-                "coords": latlon_coords
-             })
-
-    with open("../outputs/network_edges.json", "w") as f:
-        json.dump(network_data, f)
-
-    print(f"✅ Exported {len(network_data)} edges")
 # =====================================================
 # START SUMO
 # =====================================================
@@ -260,7 +225,7 @@ print("🚆 Starting Advanced Railway Digital Twin")
 
 try:
     traci.start(sumoCmd)
-    export_network_edges()
+    
     
 except:
     print("Failed to start SUMO")
@@ -346,6 +311,7 @@ traci.close()
 
 with open(RESULT_CSV,"w",newline="") as f:
     writer = csv.writer(f)
+
     writer.writerow([
         "step",
         "active_trains",
@@ -358,20 +324,3 @@ with open(RESULT_CSV,"w",newline="") as f:
     writer.writerows(metrics_log)
 
 print("🚆 Simulation Complete — Results Saved")
-import traci
-import json
-
-def export_network_edges():
-    edges = traci.edge.getIDList()
-    network_data = []
-
-    for edge in edges:
-        shape = traci.edge.getShape(edge)
-        if shape:
-            network_data.append({
-                "edge": edge,
-                "coords": shape
-            })
-
-    with open("../outputs/network_edges.json", "w") as f:
-        json.dump(network_data, f)
