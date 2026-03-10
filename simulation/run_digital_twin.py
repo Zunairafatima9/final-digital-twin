@@ -21,7 +21,7 @@ TRAINING_CSV = "../outputs/ai_training_data.csv"
 MAX_SIM_TIME = 3500
 SPAWN_INTERVAL = 25
 
-SAFE_HEADWAY = 10
+SAFE_HEADWAY = 40
 OVERTAKE_DISTANCE = 200
 
 # Passing loop / station edges
@@ -109,7 +109,7 @@ def assign_route(train_type, direction):
 
 
 # =====================================================
-# MOVING BLOCK SIGNALING
+# MOVING BLOCK SIGNALING (FIXED)
 # =====================================================
 
 def enforce_headway():
@@ -118,15 +118,30 @@ def enforce_headway():
 
     for v in vehicles:
 
-        leader = traci.vehicle.getLeader(v, SAFE_HEADWAY)
+        try:
 
-        if leader:
+            base = BASE_SPEED[classify(v)]
+            leader = traci.vehicle.getLeader(v, SAFE_HEADWAY)
 
-            leader_id, gap = leader
+            if leader:
 
-            if gap < SAFE_HEADWAY:
+                leader_id, gap = leader
 
-                traci.vehicle.setSpeed(v,0)
+                if gap < SAFE_HEADWAY:
+
+                    new_speed = max(5, gap * 0.8)
+                    traci.vehicle.setSpeed(v,new_speed)
+
+                else:
+
+                    traci.vehicle.setSpeed(v,base)
+
+            else:
+
+                traci.vehicle.setSpeed(v,base)
+
+        except:
+            pass
 
 
 # =====================================================
@@ -139,27 +154,31 @@ def intelligent_dispatch():
 
     for v in vehicles:
 
-        leader = traci.vehicle.getLeader(v, 250)
+        try:
 
-        if not leader:
-            continue
+            leader = traci.vehicle.getLeader(v, 250)
 
-        leader_id, gap = leader
+            if not leader:
+                continue
 
-        v_priority = PRIORITY[classify(v)]
-        leader_priority = PRIORITY[classify(leader_id)]
+            leader_id, gap = leader
 
-        if v_priority > leader_priority:
+            v_priority = PRIORITY[classify(v)]
+            leader_priority = PRIORITY[classify(leader_id)]
 
-            try:
-                traci.vehicle.setSpeed(leader_id,
-                    BASE_SPEED[classify(leader_id)] * 0.6)
-            except:
-                pass
+            if v_priority > leader_priority:
+
+                traci.vehicle.setSpeed(
+                    leader_id,
+                    BASE_SPEED[classify(leader_id)] * 0.6
+                )
+
+        except:
+            pass
 
 
 # =====================================================
-# PLATFORM OVERTAKING
+# PLATFORM OVERTAKING (SAFE)
 # =====================================================
 
 def platform_overtake():
@@ -168,30 +187,30 @@ def platform_overtake():
 
     for v in vehicles:
 
-        edge = traci.vehicle.getRoadID(v)
-
-        if edge not in PLATFORM_OVERTAKE_EDGES:
-            continue
-
-        leader = traci.vehicle.getLeader(v, OVERTAKE_DISTANCE)
-
-        if not leader:
-            continue
-
-        leader_id, gap = leader
-
-        v_priority = PRIORITY[classify(v)]
-        leader_priority = PRIORITY[classify(leader_id)]
-
-        if v_priority <= leader_priority:
-            continue
-
         try:
+
+            edge = traci.vehicle.getRoadID(v)
+
+            if edge not in PLATFORM_OVERTAKE_EDGES:
+                continue
+
+            leader = traci.vehicle.getLeader(v, OVERTAKE_DISTANCE)
+
+            if not leader:
+                continue
+
+            leader_id, gap = leader
+
+            v_priority = PRIORITY[classify(v)]
+            leader_priority = PRIORITY[classify(leader_id)]
+
+            if v_priority <= leader_priority:
+                continue
 
             lane = traci.vehicle.getLaneIndex(v)
             lanes = traci.edge.getLaneNumber(edge)
 
-            if lane < lanes-1:
+            if lane < lanes-1 and traci.vehicle.couldChangeLane(v,1):
 
                 traci.vehicle.changeLane(v,lane+1,40)
 
@@ -236,11 +255,9 @@ def predictive_congestion():
                 continue
 
             new_route_id = route_id.replace("FAST","SLOW")
+            new_edges = traci.route.getEdges(new_route_id)
 
-            new_route_edges = traci.route.getEdges(new_route_id)
-
-            # 🚆 ONLY SWITCH IF CURRENT EDGE EXISTS IN NEW ROUTE
-            if current_edge not in new_route_edges:
+            if current_edge not in new_edges:
                 continue
 
             traci.vehicle.setRouteID(v,new_route_id)
@@ -256,46 +273,58 @@ def predictive_congestion():
 
 
 # =====================================================
-# JUNCTION INTERLOCKING
+# JUNCTION INTERLOCKING (DEADLOCK SAFE)
 # =====================================================
 
 def enforce_junctions():
 
     conflicts = 0
-
     vehicles = traci.vehicle.getIDList()
 
     for v in vehicles:
 
-        edge = traci.vehicle.getRoadID(v)
+        try:
 
-        if edge not in CRITICAL_JUNCTION_EDGES:
-            continue
+            edge = traci.vehicle.getRoadID(v)
 
-        priority = PRIORITY[classify(v)]
+            if edge not in CRITICAL_JUNCTION_EDGES:
+                continue
 
-        if edge not in junction_locks:
+            priority = PRIORITY[classify(v)]
 
-            junction_locks[edge] = v
+            if edge not in junction_locks:
 
-        else:
-
-            locked = junction_locks[edge]
-            locked_priority = PRIORITY[classify(locked)]
-
-            if priority > locked_priority:
-
-                traci.vehicle.setSpeed(locked,0)
                 junction_locks[edge] = v
 
             else:
 
-                traci.vehicle.setSpeed(v,0)
-                conflicts += 1
+                locked = junction_locks[edge]
 
+                if locked not in vehicles:
+                    junction_locks[edge] = v
+                    continue
+
+                locked_priority = PRIORITY[classify(locked)]
+
+                if priority > locked_priority:
+
+                    traci.vehicle.setSpeed(locked,5)
+                    junction_locks[edge] = v
+
+                else:
+
+                    traci.vehicle.setSpeed(v,5)
+                    conflicts += 1
+
+        except:
+            pass
+
+    # auto release
     for edge in list(junction_locks.keys()):
 
-        if junction_locks[edge] not in vehicles:
+        locked = junction_locks[edge]
+
+        if locked not in vehicles:
             junction_locks.pop(edge)
 
     return conflicts
@@ -327,11 +356,8 @@ next_spawn = 0
 while step < MAX_SIM_TIME:
 
     traci.simulationStep()
-    
 
-    # ===============================
     # LIVE TRAIN INJECTION
-    # ===============================
 
     if os.path.exists(LIVE_FILE):
 
@@ -340,7 +366,6 @@ while step < MAX_SIM_TIME:
         if mod != last_modified:
 
             last_modified = mod
-
             df = pd.read_csv(LIVE_FILE)
 
             spawn_queue.clear()
@@ -351,12 +376,11 @@ while step < MAX_SIM_TIME:
                 lat = float(row["latitude"])
 
                 ttype = classify(train_id)
-
                 direction = detect_direction(lat)
-
                 route = assign_route(ttype,direction)
 
                 spawn_queue.append((train_id,route,ttype))
+
 
     if spawn_queue and step >= next_spawn:
 
@@ -366,10 +390,16 @@ while step < MAX_SIM_TIME:
 
             try:
 
-                traci.vehicle.add(train_id,route,typeID="LIVE_RAIL")
+                first_edge = traci.route.getEdges(route)[0]
 
-                traci.vehicle.setMaxSpeed(train_id,
-                    BASE_SPEED[ttype])
+                if traci.edge.getLastStepVehicleNumber(first_edge) < 2:
+
+                    traci.vehicle.add(train_id,route,typeID="LIVE_RAIL")
+
+                    traci.vehicle.setMaxSpeed(
+                        train_id,
+                        BASE_SPEED[ttype]
+                    )
 
             except:
                 pass
@@ -377,67 +407,19 @@ while step < MAX_SIM_TIME:
         next_spawn = step + SPAWN_INTERVAL
 
 
-    # ===============================
     # CONTROL LAYERS
-    # ===============================
 
     enforce_headway()
-
     intelligent_dispatch()
-
     platform_overtake()
 
     junction_conflicts = enforce_junctions()
-
     switches = predictive_congestion()
+
     vehicles = traci.vehicle.getIDList()
-    # =====================================================
-# EXPORT BLOCK OCCUPANCY
-# =====================================================
 
-    block_data = []
 
-    for v in vehicles:
-
-        try:
-            edge = traci.vehicle.getRoadID(v)
-
-            x, y = traci.vehicle.getPosition(v)
-            lon, lat = traci.simulation.convertGeo(x, y)
-
-            block_data.append({
-                "train_id": v,
-                "edge": edge,
-                "lat": lat,
-                "lon": lon
-            })
-
-        except:
-                pass
-
-    with open("../outputs/live_blocks.json", "w") as f:
-        json.dump(block_data, f)
-    # =========================================
-# EXPORT OCCUPIED TRACK EDGES
-# =========================================
-
-    occupied_edges = set()
-
-    for v in vehicles:
-        try:
-            edge = traci.vehicle.getRoadID(v)
-            occupied_edges.add(edge)
-        except:
-            pass
-
-    with open("../outputs/live_edges.json", "w") as f:
-        json.dump(list(occupied_edges), f)
-
-    # ===============================
     # EXPORT LIVE TRAIN POSITIONS
-    # ===============================
-
-    
 
     live_trains = []
 
@@ -446,7 +428,6 @@ while step < MAX_SIM_TIME:
         try:
 
             x,y = traci.vehicle.getPosition(v)
-
             lon,lat = traci.simulation.convertGeo(x,y)
 
             live_trains.append({
@@ -458,52 +439,11 @@ while step < MAX_SIM_TIME:
         except:
             pass
 
-
     with open(LIVE_JSON,"w") as f:
         json.dump(live_trains,f)
-    # ==================================
-    # AI TRAINING DATA
-    # ==================================
-
-    rows = []
-
-    for v in vehicles:
-
-        try:
-
-            speed = traci.vehicle.getSpeed(v)
-
-            edge = traci.vehicle.getRoadID(v)
-
-            waiting = traci.vehicle.getWaitingTime(v)
-
-            leader = traci.vehicle.getLeader(v,200)
-
-            gap = leader[1] if leader else 999
-
-            rows.append([
-                step,
-                v,
-                classify(v),
-                speed,
-                gap,
-                waiting,
-                edge
-            ])
-
-        except:
-            pass
-
-    with open(TRAINING_CSV,"a",newline="") as f:
-
-        writer = csv.writer(f)
-
-        writer.writerows(rows)
 
 
-    # ===============================
     # METRICS
-    # ===============================
 
     if vehicles:
 
