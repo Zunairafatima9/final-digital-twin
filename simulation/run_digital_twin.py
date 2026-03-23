@@ -10,6 +10,8 @@ import json
 # CONFIG
 # =====================================================
 
+
+
 SUMO_BINARY = "sumo-gui"
 SUMO_CONFIG = "sumo.sumocfg"
 
@@ -19,7 +21,7 @@ RESULT_CSV = "../outputs/simulation_results.csv"
 TRAINING_CSV = "../outputs/ai_training_data.csv"
 
 MAX_SIM_TIME = 3500
-SPAWN_INTERVAL = 25
+SPAWN_INTERVAL = 5
 
 SAFE_HEADWAY = 40
 OVERTAKE_DISTANCE = 200
@@ -64,7 +66,7 @@ BASE_SPEED = {
 spawn_queue = []
 junction_locks = {}
 metrics_log = []
-
+completed_trains = set()
 overtake_events = []
 dynamic_switches = []
 
@@ -371,6 +373,10 @@ while step < MAX_SIM_TIME:
             spawn_queue.clear()
 
             for _,row in df.iterrows():
+                arrived = traci.simulation.getArrivedIDList()
+
+                for t in arrived:
+                    completed_trains.add(t)
 
                 train_id = str(int(float(row["train_id"])))
                 lat = float(row["latitude"])
@@ -427,13 +433,17 @@ while step < MAX_SIM_TIME:
 
         try:
 
+        # 📍 Position
             x,y = traci.vehicle.getPosition(v)
             lon,lat = traci.simulation.convertGeo(x,y)
 
+
+        # 📦 Output
+
             live_trains.append({
-                "id": v,
-                "lat": lat,
-                "lon": lon
+                "id": str(v),
+                "lat": float(lat),
+                "lon": float(lon),
             })
 
         except:
@@ -460,14 +470,14 @@ while step < MAX_SIM_TIME:
 
 
     metrics_log.append([
-        step,
-        len(vehicles),
-        avg_speed,
-        congestion,
-        len(overtake_events),
-        junction_conflicts,
-        switches
-    ])
+    step,
+    len(vehicles),
+    avg_speed,
+    congestion,
+    len(overtake_events),
+    junction_conflicts,
+    switches,
+])
 
 
     if step % 50 == 0:
@@ -493,14 +503,15 @@ with open(RESULT_CSV,"w",newline="") as f:
     writer = csv.writer(f)
 
     writer.writerow([
-        "step",
-        "active_trains",
-        "avg_speed",
-        "congestion_index",
-        "overtake_events",
-        "junction_conflicts",
-        "dynamic_switches"
-    ])
+    "step",
+    "active_trains",
+    "avg_speed",
+    "congestion_index",
+    "overtake_events",
+    "junction_conflicts",
+    "dynamic_switches",
+
+])
 
     writer.writerows(metrics_log)
 

@@ -42,25 +42,25 @@
 
     <!-- ================= HOWRAH ================= -->
 
-    <busStop id="HOWRAH_UP_SLOW"
+    <trainStop id="HOWRAH_UP_SLOW"
              lane="372172712_0"
              startPos="100"
              endPos="400"
              lines="SLOW"/>
 
-    <busStop id="HOWRAH_UP_FAST"
+    <trainStop id="HOWRAH_UP_FAST"
              lane="372172712_0"
              startPos="450"
              endPos="700"
              lines="FAST"/>
 
-    <busStop id="HOWRAH_DOWN_SLOW"
+    <trainStop id="HOWRAH_DOWN_SLOW"
              lane="810347770_0"
              startPos="100"
              endPos="400"
              lines="SLOW"/>
 
-    <busStop id="HOWRAH_DOWN_FAST"
+    <trainStop id="HOWRAH_DOWN_FAST"
              lane="810347770_0"
              startPos="450"
              endPos="700"
@@ -68,30 +68,34 @@
 
     <!-- ================= BANDel ================= -->
 
-    <busStop id="BANDEL_UP_SLOW"
+    <trainStop id="BANDEL_UP_SLOW"
              lane="521495092#7_0"
              startPos="100"
              endPos="400"
              lines="SLOW"/>
 
-    <busStop id="BANDEL_UP_FAST"
+    <trainStop id="BANDEL_UP_FAST"
              lane="521495092#7_0"
              startPos="450"
              endPos="700"
              lines="FAST"/>
 
-    <busStop id="BANDEL_DOWN_SLOW"
+    <trainStop id="BANDEL_DOWN_SLOW"
              lane="789062200_0"
              startPos="100"
              endPos="400"
              lines="SLOW"/>
 
-    <busStop id="BANDEL_DOWN_FAST"
+    <trainStop id="BANDEL_DOWN_FAST"
              lane="789062200_0"
              startPos="450"
              endPos="700"
              lines="FAST"/>
-
+     <!-- StoppingPlaces -->
+    <trainStop id="bally" lane="380964041_0" startPos="605.17" endPos="615.17"/>
+    <trainStop id="chandannagar" lane="521712764_0" startPos="5.72" endPos="15.72"/>
+    <trainStop id="chuchura" lane="810347770_0" startPos="4998.91" endPos="5008.91"/>
+    <trainStop id="serampur" lane="44629484_0" startPos="2766.45" endPos="2776.45"/>
 
     <!-- ================= BLOCK SIGNALS ================= -->
     <!-- DOWN start -->

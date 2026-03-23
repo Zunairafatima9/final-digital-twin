@@ -1,37 +1,45 @@
 import { Marker } from "react-leaflet"
-import { useSpring, animated } from "@react-spring/web"
+import { useSpring } from "@react-spring/web"
 import { useEffect } from "react"
 import L from "leaflet"
 
 const trainIcon = new L.Icon({
   iconUrl: "https://cdn-icons-png.flaticon.com/512/565/565410.png",
-  iconSize: [30, 30]
+  iconSize: [30, 30],
+  iconAnchor: [15, 15]
 })
 
-export default function AnimatedTrain({position}){
+export default function AnimatedTrain({ lat, lon, onClick }) {
 
-const [styles,api] = useSpring(()=>({
-  lat: position[0],
-  lng: position[1]
-}))
+  const [style, api] = useSpring(() => ({
+    lat: lat,
+    lon: lon,
+    config: { duration: 800 }
+  }))
 
-useEffect(()=>{
+  useEffect(() => {
 
-api.start({
-  lat: position[0],
-  lng: position[1],
-  config:{duration:1000}
-})
+    if(lat !== undefined && lon !== undefined){
 
-},[position])
+      api.start({
+        lat: lat,
+        lon: lon
+      })
 
-return(
+    }
 
-<Marker
-position={[styles.lat.get(),styles.lng.get()]}
-icon={trainIcon}
-/>
+  }, [lat, lon])
 
-)
+  return (
+
+    <Marker
+      position={[style.lat.get(), style.lon.get()]}
+      icon={trainIcon}
+      eventHandlers={{
+        click: onClick
+      }}
+    />
+
+  )
 
 }
