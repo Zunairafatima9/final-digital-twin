@@ -4,6 +4,7 @@ import axios from "axios"
 import L from "leaflet"
 import "leaflet/dist/leaflet.css"
 import AnimatedTrain from "./AnimatedTrain"
+import TrainInfoPanel from "./TrainInfoPanel"
 import { CircleMarker } from "react-leaflet"
 delete L.Icon.Default.prototype._getIconUrl
 
@@ -25,7 +26,7 @@ export default function LiveMap(){
 
 const [trains,setTrains] = useState([])
 const [tracks,setTracks] = useState(null)
-const [blocks, setBlocks] = useState([])
+
 const [occupiedEdges,setOccupiedEdges] = useState([])
 const [selectedTrain,setSelectedTrain] = useState(null)
 
@@ -63,20 +64,8 @@ useEffect(()=>{
 
 },[])
 
-useEffect(() => {
 
-  const fetchBlocks = async () => {
-    const res = await axios.get("http://127.0.0.1:5000/blocks")
-    setBlocks(res.data)
-  }
 
-  fetchBlocks()
-
-  const interval = setInterval(fetchBlocks, 1000)
-
-  return () => clearInterval(interval)
-
-}, [])
 
 return(
 
@@ -102,37 +91,21 @@ weight:3
 
 {trains.map(train => (
 
-<Marker
+
+<AnimatedTrain
 key={train.id}
-position={[train.lat, train.lon]}
-icon={trainIcon}
+lat={train.lat}
+lon={train.lon}
 onClick={()=>setSelectedTrain(train)}
 >
 <TrainInfoPanel train={selectedTrain}/>
 <Popup>
 Train {train.id}
 </Popup>
-
-</Marker>
-
-))}
-{blocks.map(block => (
-
-<CircleMarker
-  key={block.train_id}
-  center={[block.lat, block.lon]}
-  radius={6}
-  pathOptions={{ color: "red" }}
->
-
-<Popup>
-Train: {block.train_id}  
-Edge: {block.edge}
-</Popup>
-
-</CircleMarker>
+</AnimatedTrain>
 
 ))}
+
 
 </MapContainer>
 

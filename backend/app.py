@@ -46,27 +46,24 @@ def edges():
 
     return jsonify(data)
 
-@app.route("/blocks")
-def blocks():
-
-    if not os.path.exists(LIVE_BLOCK_FILE):
-        return jsonify([])
-
-    with open(LIVE_BLOCK_FILE) as f:
-        data = json.load(f)
-
-    return jsonify(data)
 
 @app.route("/trains")
 def trains():
 
-    if not os.path.exists(LIVE_FILE):
+    try:
+
+        if not os.path.exists(LIVE_FILE):
+            return jsonify([])
+
+        with open(LIVE_FILE,"r") as f:
+            data = json.load(f)
+
+        return jsonify(data)
+
+    except Exception as e:
+
+        print("TRAIN API ERROR:", e)
         return jsonify([])
-
-    with open(LIVE_FILE) as f:
-        data = json.load(f)
-
-    return jsonify(data)
 import json
 
 @app.route("/tracks")

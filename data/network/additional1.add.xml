@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2026-03-18T20:06:29.393177+05:30 by Eclipse SUMO netedit 1.26.0
+-->
+
+<additional xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/additional_file.xsd">
+    <!-- StoppingPlaces -->
+    <trainStop id="bally" lane="380964041_0" startPos="605.17" endPos="615.17"/>
+    <trainStop id="chandannagar" lane="521712764_0" startPos="5.72" endPos="15.72"/>
+    <trainStop id="chuchura" lane="810347770_0" startPos="4998.91" endPos="5008.91"/>
+    <trainStop id="serampur" lane="44629484_0" startPos="2766.45" endPos="2776.45"/>
+</additional>
